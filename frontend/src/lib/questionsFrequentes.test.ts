@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { questionsFrequentes, questionsRestantes, trouverReponse } from "./questionsFrequentes";
+import { questionsFrequentes, questionsRestantes, trouverParTexte, trouverReponse } from "./questionsFrequentes";
 
 describe("trouverReponse", () => {
   it("renvoie la réponse factuelle et la ressource associées à une question connue", () => {
@@ -22,5 +22,16 @@ describe("questionsRestantes", () => {
     const restantes = questionsRestantes(["Vers quel professionnel aller ?"]);
     expect(restantes).toHaveLength(2);
     expect(restantes.some((q) => q.question === "Vers quel professionnel aller ?")).toBe(false);
+  });
+});
+
+describe("trouverParTexte", () => {
+  it("fait correspondre une saisie libre à la bonne réponse via ses mots-clés, sans accent ni casse", () => {
+    const resultat = trouverParTexte("Est-ce que je peux avoir un BÉBÉ un jour ?");
+    expect(resultat?.question).toBe("Est-ce que je pourrai avoir un enfant ?");
+  });
+
+  it("ne renvoie rien pour une saisie hors sujet, plutôt qu'une réponse inventée", () => {
+    expect(trouverParTexte("Quelle est la capitale de la France ?")).toBeUndefined();
   });
 });

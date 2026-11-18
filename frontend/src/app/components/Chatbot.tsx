@@ -1,16 +1,43 @@
 "use client";
 
 import { useState } from "react";
-import { questionsRestantes, trouverReponse, type QuestionFrequente } from "@/lib/questionsFrequentes";
+import { questionsRestantes, trouverParTexte, trouverReponse } from "@/lib/questionsFrequentes";
+
+type Echange = {
+  texteAffiche: string;
+  reponse: string;
+  ressource?: { label: string; href: string };
+};
 
 export default function Chatbot() {
   const [ouvert, setOuvert] = useState(false);
-  const [historique, setHistorique] = useState<QuestionFrequente[]>([]);
-  const restantes = questionsRestantes(historique.map((h) => h.question));
+  const [historique, setHistorique] = useState<Echange[]>([]);
+  const [canoniquesPosees, setCanoniquesPosees] = useState<string[]>([]);
+  const [saisie, setSaisie] = useState("");
+  const restantes = questionsRestantes(canoniquesPosees);
 
   function poserQuestion(question: string) {
-    const reponse = trouverReponse(question);
-    if (reponse) setHistorique((h) => [...h, reponse]);
+    const trouve = trouverReponse(question);
+    if (!trouve) return;
+    setHistorique((h) => [...h, { texteAffiche: trouve.question, reponse: trouve.reponse, ressource: trouve.ressource }]);
+    setCanoniquesPosees((c) => [...c, trouve.question]);
+  }
+
+  function soumettreSaisie(e: React.FormEvent) {
+    e.preventDefault();
+    const texte = saisie.trim();
+    if (!texte) return;
+    const trouve = trouverParTexte(texte);
+    if (trouve) {
+      setHistorique((h) => [...h, { texteAffiche: texte, reponse: trouve.reponse, ressource: trouve.ressource }]);
+      setCanoniquesPosees((c) => (c.includes(trouve.question) ? c : [...c, trouve.question]));
+    } else {
+      setHistorique((h) => [
+        ...h,
+        { texteAffiche: texte, reponse: "Je ne sais pas répondre à ça pour l'instant. Reformulez ou choisissez une question ci-dessous." },
+      ]);
+    }
+    setSaisie("");
   }
 
   if (!ouvert) {
@@ -37,6 +64,8 @@ export default function Chatbot() {
           onClick={() => {
             setOuvert(false);
             setHistorique([]);
+            setCanoniquesPosees([]);
+            setSaisie("");
           }}
           style={styles.fermer}
         >
@@ -44,14 +73,16 @@ export default function Chatbot() {
         </button>
       </div>
       <div style={styles.conversation} data-testid="conversation">
-        {historique.map((echange) => (
-          <div key={echange.question} style={styles.tour}>
-            <div style={styles.bulleUtilisateur}>{echange.question}</div>
+        {historique.map((echange, index) => (
+          <div key={index} style={styles.tour}>
+            <div style={styles.bulleUtilisateur}>{echange.texteAffiche}</div>
             <div style={styles.bulleBot} data-testid="reponse-chatbot">
               <p style={{ margin: 0 }}>{echange.reponse}</p>
-              <a href={echange.ressource.href} target="_blank" rel="noreferrer" style={styles.lienRessource}>
-                {echange.ressource.label}
-              </a>
+              {echange.ressource ? (
+                <a href={echange.ressource.href} target="_blank" rel="noreferrer" style={styles.lienRessource}>
+                  {echange.ressource.label}
+                </a>
+              ) : null}
             </div>
           </div>
         ))}
@@ -74,6 +105,20 @@ export default function Chatbot() {
       ) : (
         <p style={styles.fin}>Merci d&apos;avoir échangé avec Andréa. 💜</p>
       )}
+      <form onSubmit={soumettreSaisie} style={styles.formSaisie}>
+        <input
+          type="text"
+          data-testid="saisie-chatbot"
+          value={saisie}
+          onChange={(e) => setSaisie(e.target.value)}
+          placeholder="Écrivez votre question…"
+          aria-label="Votre question"
+          style={styles.champSaisie}
+        />
+        <button type="submit" style={styles.envoyer} aria-label="Envoyer">
+          ➤
+        </button>
+      </form>
     </div>
   );
 }
@@ -175,5 +220,26 @@ const styles: Record<string, React.CSSProperties> = {
     padding: 16,
     textAlign: "center",
     color: "var(--brand-muted)",
+  },
+  formSaisie: {
+    display: "flex",
+    gap: 8,
+    padding: 12,
+    borderTop: "1px solid #e5e0d6",
+  },
+  champSaisie: {
+    flex: 1,
+    padding: "8px 12px",
+    borderRadius: 999,
+    border: "1px solid var(--brand-muted)",
+  },
+  envoyer: {
+    width: 36,
+    height: 36,
+    borderRadius: "50%",
+    border: "none",
+    background: "var(--brand)",
+    color: "white",
+    cursor: "pointer",
   },
 };

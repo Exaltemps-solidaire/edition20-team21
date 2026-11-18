@@ -94,6 +94,26 @@
     - `frontend/src/lib/questionsFrequentes.test.ts` : test sur `questionsRestantes()`.
     - `frontend/src/app/components/Chatbot.tsx` : remplace l'état « une question affichée » par un historique de tous les échanges, rendu en bulles question/réponse empilées, liste des questions restantes sous la conversation, message de fin si plus de question disponible — sert les 3 critères.
 
+## Itération 2c : Champ de saisie libre avec correspondance par mots-clés (demande du développeur, 2026-11-18)
+
+- **Contexte** : le développeur a redemandé explicitement un champ de saisie. ❗️ Rappel du conflit avec la passation (critère de succès « sans saisie libre », règle « pas de réponse inventée, pas d'avis médical ») — tranché avec le développeur avant codage, via un choix de mécanisme sans génération : saisie libre acceptée, mais la réponse vient uniquement des 3 réponses factuelles déjà écrites, retrouvées par mots-clés (pas de LLM). ⚠️ À faire valider par les cadreurs si le besoin dépasse le pitch : ça déplace l'hypothèse mesurée par l'équipe.
+- **Dans le périmètre** : un champ de texte sous la conversation ; la saisie est comparée aux mots-clés des 3 questions connues ; en cas de correspondance, même réponse factuelle + ressource qu'au clic (et la question correspondante disparaît de la liste de boutons) ; sinon, message « Je ne sais pas répondre à ça pour l'instant, reformulez ou choisissez une question ».
+- **Hors périmètre** : génération par LLM, correspondance approximative/fuzzy au-delà de mots-clés simples, persistance de la conversation.
+- **Critères d'acceptation** :
+  - Étant donné le champ de saisie, quand on tape une formulation contenant un mot-clé d'une question connue (ex. « bébé » pour la fertilité) et qu'on valide, alors la réponse factuelle correspondante s'affiche.
+  - Étant donné une saisie sans mot-clé reconnu, quand on valide, alors le message « Je ne sais pas... » s'affiche, jamais une réponse inventée.
+  - Étant donné une question déjà obtenue par saisie libre, quand on regarde la liste des questions cliquables, alors elle n'y figure plus (pas de doublon avec les boutons).
+- **Bilan** :
+  - Temps annoncé : encore 10 minutes au moment de la demande — traité en micro-itération de stabilisation, comme les deux précédentes.
+  - Durée de codage réelle : 1 min.
+  - Critères satisfaits : les 3.
+  - Reporté : rien de ce périmètre ; Itération 3 (invitation à la rencontre) toujours en attente ; LLM/génération explicitement écarté, à rediscuter avec les cadreurs si besoin au-delà du pitch.
+  - Harnais : aucune borne, `npm test` passe (9 tests), signal PM Lab accepté (version 4).
+  - **Modifications** :
+    - `frontend/src/lib/questionsFrequentes.ts` : ajout de `motsClefs` sur chaque question et de `trouverParTexte()` (normalisation accents/casse, correspondance par inclusion de mot-clé, jamais de réponse inventée) — sert les critères 1 et 2.
+    - `frontend/src/lib/questionsFrequentes.test.ts` : 2 tests sur `trouverParTexte()` (correspondance avec accents/casse, absence de correspondance).
+    - `frontend/src/app/components/Chatbot.tsx` : ajout d'un formulaire de saisie, suivi séparé des questions canoniques déjà obtenues (pour la liste de boutons) et de l'historique affiché (texte brut tapé ou question cliquée) — sert les 3 critères.
+
 ## Itération 3 : Invitation à la rencontre entre patientes après la réponse
 
 - **Dans le périmètre** : après une réponse factuelle, affichage d'une invitation à rencontrer d'autres personnes diagnostiquées (groupes de parole, cafés patientes, ETP), en dur.

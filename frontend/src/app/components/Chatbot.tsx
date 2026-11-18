@@ -1,18 +1,12 @@
 "use client";
 
 import { useState } from "react";
-
-// Les 3 questions du scénario de la passation (cadrage/7-prd.md). Les réponses
-// arrivent à l'itération 2 : ce composant se contente d'ouvrir la fenêtre et de
-// les afficher.
-const questionsFrequentes = [
-  "Est-ce que je pourrai avoir un enfant ?",
-  "Comment gérer la douleur au quotidien ?",
-  "Vers quel professionnel aller ?",
-];
+import { questionsFrequentes, trouverReponse } from "@/lib/questionsFrequentes";
 
 export default function Chatbot() {
   const [ouvert, setOuvert] = useState(false);
+  const [questionChoisie, setQuestionChoisie] = useState<string | null>(null);
+  const reponse = questionChoisie ? trouverReponse(questionChoisie) : undefined;
 
   if (!ouvert) {
     return (
@@ -35,21 +29,41 @@ export default function Chatbot() {
         <button
           type="button"
           aria-label="Fermer le chatbot"
-          onClick={() => setOuvert(false)}
+          onClick={() => {
+            setOuvert(false);
+            setQuestionChoisie(null);
+          }}
           style={styles.fermer}
         >
           ×
         </button>
       </div>
-      <ul style={styles.listeQuestions}>
-        {questionsFrequentes.map((question) => (
-          <li key={question}>
-            <button type="button" data-testid="question-frequente" style={styles.question}>
-              {question}
-            </button>
-          </li>
-        ))}
-      </ul>
+      {reponse ? (
+        <div style={styles.reponse} data-testid="reponse-chatbot">
+          <p style={{ margin: 0 }}>{reponse.reponse}</p>
+          <a href={reponse.ressource.href} target="_blank" rel="noreferrer" style={styles.lienRessource}>
+            {reponse.ressource.label}
+          </a>
+          <button type="button" style={styles.retour} onClick={() => setQuestionChoisie(null)}>
+            ← Revenir aux questions
+          </button>
+        </div>
+      ) : (
+        <ul style={styles.listeQuestions}>
+          {questionsFrequentes.map(({ question }) => (
+            <li key={question}>
+              <button
+                type="button"
+                data-testid="question-frequente"
+                style={styles.question}
+                onClick={() => setQuestionChoisie(question)}
+              >
+                {question}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
@@ -110,5 +124,24 @@ const styles: Record<string, React.CSSProperties> = {
     border: "1px solid var(--brand)",
     background: "#f2eee2",
     cursor: "pointer",
+  },
+  reponse: {
+    padding: 16,
+    display: "flex",
+    flexDirection: "column",
+    gap: 10,
+  },
+  lienRessource: {
+    color: "var(--brand)",
+    fontWeight: 600,
+    textDecoration: "underline",
+  },
+  retour: {
+    alignSelf: "flex-start",
+    background: "none",
+    border: "none",
+    color: "var(--brand-muted)",
+    cursor: "pointer",
+    padding: 0,
   },
 };

@@ -63,7 +63,16 @@
 - **Fichiers prévus** : données Q/R en dur (api ou frontend selon l'architecture retenue à ce moment-là), route/fonction qui retourne la réponse, affichage du message dans la fenêtre de chat.
 - **Tests unitaires prévus** : 1 à 2, sur la fonction qui associe une question à sa réponse/ressource.
 - **Étapes ajoutées à la démo** : clic sur une question fréquente → réponse affichée avec sa ressource.
-- **Bilan** : _à remplir en fin d'itération_
+- **Bilan** :
+  - Contexte : 10 minutes de build restantes annoncées par le développeur (18/11/2026 17:53) — pas assez pour coder (≤10 min) + publier (~5 min) + tour de test. ✂️ proposé et confirmé par le développeur (« Focus sur le chatbot ») : on code cette itération telle quelle (déjà dimensionnée à 8 min), sans ajouter l'Itération 3, et elle sert de stabilisation pour le pitch.
+  - Durée de codage réelle : 1 min (pas de dépassement).
+  - Critères satisfaits : les 3 — réponse factuelle au clic, ressource ENDOmind citée pour chacune des 3 questions, réponse propre à chaque question (pas de texte générique).
+  - Reporté : rien de ce périmètre ; l'Itération 3 (invitation à la rencontre) reste à faire, son critère dépendait justement de cette réponse factuelle.
+  - Harnais : aucune borne de déployabilité, `npm test` passe (6 tests, 2 fichiers), signal PM Lab accepté (version 2).
+  - **Modifications** :
+    - `frontend/src/lib/questionsFrequentes.ts` (nouveau) : les 3 couples question/réponse factuelle/ressource ENDOmind, fonction `trouverReponse` — sert les 3 critères.
+    - `frontend/src/lib/questionsFrequentes.test.ts` (nouveau) : 3 tests unitaires sur `trouverReponse` (réponse connue, question inconnue → `undefined`, nombre de questions) — sert le critère « pas de réponse générique/inventée ».
+    - `frontend/src/app/components/Chatbot.tsx` : clic sur une question affiche sa réponse + lien ressource + bouton retour, au lieu de ne rien faire — sert les 3 critères.
 
 ## Itération 3 : Invitation à la rencontre entre patientes après la réponse
 

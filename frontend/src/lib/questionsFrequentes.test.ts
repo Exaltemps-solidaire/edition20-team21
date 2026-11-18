@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { questionsFrequentes, trouverReponse } from "./questionsFrequentes";
+import { questionsFrequentes, questionsRestantes, trouverReponse } from "./questionsFrequentes";
 
 describe("trouverReponse", () => {
   it("renvoie la réponse factuelle et la ressource associées à une question connue", () => {
@@ -14,5 +14,13 @@ describe("trouverReponse", () => {
 
   it("couvre exactement les 3 questions du scénario de la passation", () => {
     expect(questionsFrequentes).toHaveLength(3);
+  });
+});
+
+describe("questionsRestantes", () => {
+  it("retire une question déjà posée pour permettre d'enchaîner sans la reproposer", () => {
+    const restantes = questionsRestantes(["Vers quel professionnel aller ?"]);
+    expect(restantes).toHaveLength(2);
+    expect(restantes.some((q) => q.question === "Vers quel professionnel aller ?")).toBe(false);
   });
 });

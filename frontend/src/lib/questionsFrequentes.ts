@@ -30,3 +30,9 @@ export const questionsFrequentes: QuestionFrequente[] = [
 export function trouverReponse(question: string): QuestionFrequente | undefined {
   return questionsFrequentes.find((q) => q.question === question);
 }
+
+// Permet d'enchaîner plusieurs questions dans la même conversation : une fois
+// posée, une question ne se repropose pas (toujours par clic, jamais de saisie libre).
+export function questionsRestantes(deja_posees: string[]): QuestionFrequente[] {
+  return questionsFrequentes.filter((q) => !deja_posees.includes(q.question));
+}

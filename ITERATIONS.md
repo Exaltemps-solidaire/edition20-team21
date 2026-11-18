@@ -74,6 +74,26 @@
     - `frontend/src/lib/questionsFrequentes.test.ts` (nouveau) : 3 tests unitaires sur `trouverReponse` (réponse connue, question inconnue → `undefined`, nombre de questions) — sert le critère « pas de réponse générique/inventée ».
     - `frontend/src/app/components/Chatbot.tsx` : clic sur une question affiche sa réponse + lien ressource + bouton retour, au lieu de ne rien faire — sert les 3 critères.
 
+## Itération 2b : Conversation enchaînée, pas une simple FAQ (demande du développeur, 2026-11-18)
+
+- **Contexte** : le développeur a jugé l'Itération 2 trop proche d'une FAQ statique (une question = un écran, rien ne s'accumule). Il a demandé « un vrai chatbot conversationnel ». ❗️ Conflit signalé et tranché avec le développeur avant codage : la passation impose explicitement « sans saisie libre » comme critère de succès (`passation/cadrage/7-prd.md`) — pas de champ de texte libre, pas de génération par LLM. Option retenue (confirmée) : enchaîner plusieurs questions par clic, avec un historique visuel façon conversation (bulles), au lieu d'un remplacement question→réponse isolé.
+- **Dans le périmètre** : les réponses précédentes restent affichées (bulles utilisateur/bot qui s'accumulent) ; après une réponse, la liste des questions restantes réapparaît pour enchaîner ; une question déjà posée ne se repropose pas ; message de fin quand les 3 questions ont été posées.
+- **Hors périmètre** : saisie libre, génération de réponse par LLM, persistance de la conversation après fermeture du chatbot.
+- **Critères d'acceptation** :
+  - Étant donné une première question posée, quand on clique une deuxième question, alors la réponse à la première reste visible au-dessus.
+  - Étant donné une question déjà posée, quand on regarde la liste, alors elle n'y figure plus.
+  - Étant donné les 3 questions posées, quand on regarde la fenêtre, alors un message de fin s'affiche à la place de la liste.
+- **Bilan** :
+  - Temps annoncé : 10 minutes restantes pour « un vrai chatbot conversationnel » — même contrainte que l'itération précédente (✂️ pas de marge pour un tour de test complet), traitée comme stabilisation du pitch.
+  - Durée de codage réelle : 1 min.
+  - Critères satisfaits : les 3.
+  - Reporté : rien de ce périmètre ; Itération 3 (invitation à la rencontre) toujours en attente.
+  - Harnais : aucune borne, `npm test` passe (7 tests), signal PM Lab accepté (version 3).
+  - **Modifications** :
+    - `frontend/src/lib/questionsFrequentes.ts` : ajout de `questionsRestantes()` — exclut les questions déjà posées, sert le critère 2.
+    - `frontend/src/lib/questionsFrequentes.test.ts` : test sur `questionsRestantes()`.
+    - `frontend/src/app/components/Chatbot.tsx` : remplace l'état « une question affichée » par un historique de tous les échanges, rendu en bulles question/réponse empilées, liste des questions restantes sous la conversation, message de fin si plus de question disponible — sert les 3 critères.
+
 ## Itération 3 : Invitation à la rencontre entre patientes après la réponse
 
 - **Dans le périmètre** : après une réponse factuelle, affichage d'une invitation à rencontrer d'autres personnes diagnostiquées (groupes de parole, cafés patientes, ETP), en dur.

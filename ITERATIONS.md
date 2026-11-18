@@ -97,6 +97,35 @@
 - **Étapes ajoutées à la démo** : dicter une des 3 questions au micro → voir la réponse s'afficher.
 - **Bilan** : _à remplir en fin d'itération_
 
+## Itération 5 : Habillage visuel aligné sur endomind.org (demande du développeur, 2026-11-18)
+
+- **Dans le périmètre** :
+  - Palette de couleurs : couleur de marque `#B33960` (rose/bordeaux, dominante du site) en primaire, fond crème `#F2EEE2` ou blanc, texte gris `#8F8F8F` en secondaire — remplace les variables CSS actuelles (`--background`, `--foreground`, couleurs en dur des boutons/bulle).
+  - Typographie : import des polices **Poppins** (texte courant) et **Anton** (titres/accroches), remplace `Arial, Helvetica, sans-serif` dans `globals.css`.
+  - Reprise du style des boutons/CTA sur l'écran persona et la bulle de chatbot (coins, couleur, contraste), sans copier le logo ni les visuels protégés du site (seulement couleurs/typographie/esprit).
+- **Hors périmètre** : récupération du logo ENDOmind (fichier non fourni dans la passation) ; refonte de la mise en page/structure des écrans ; animations.
+- **Critères d'acceptation** :
+  - Étant donné l'écran « Qui êtes-vous ? », quand il s'affiche, alors il utilise la couleur de marque et les polices Poppins/Anton.
+  - Étant donné la bulle et la fenêtre de chatbot, quand elles s'affichent, alors leurs couleurs reprennent la palette ENDOmind (plus `#171717` sur blanc générique).
+  - Étant donné n'importe quel écran existant, quand on compare avant/après, alors aucun texte ni fonctionnalité n'a changé — seul le style visuel diffère.
+- **Hypothèse de l'équipe couverte** : aucune — demande de style, pas une fonctionnalité testée par l'équipe.
+- **Codage estimé** : 8 minutes (variables CSS + import des polices + ajustement des styles inline existants dans `page.tsx`/`Chatbot.tsx`).
+- **Fichiers prévus** : `frontend/src/app/globals.css`, `frontend/src/app/layout.tsx` (chargement des polices), `frontend/src/app/page.tsx`, `frontend/src/app/components/Chatbot.tsx`.
+- **Tests unitaires prévus** : aucun — pur balisage/style, rien à tester en logique métier (cohérent avec la règle « pas de test sur du balisage pur »).
+- **Étapes ajoutées à la démo** : aucune nouvelle étape (le parcours ne change pas, seul le style change).
+- **Bilan** :
+  - Priorisée par le développeur avant l'itération 2, avec 15 minutes restantes annoncées — traitée comme itération de stabilisation (⚠️ pas de tour de test complet de l'équipe possible dans ce budget, demande explicitement priorisée par le développeur).
+  - Durée de codage réelle : 1 minute (budget 8 minutes estimées, 10 minutes plafond — aucun dépassement).
+  - Critères d'acceptation : les 3 sont satisfaits — couleur de marque et polices Poppins/Anton appliquées sur l'écran persona et le site ENDOmind, palette reprise sur la bulle/fenêtre de chatbot, aucun texte ni fonctionnalité modifiés. Vérifié dans le CSS réellement servi en production (`b33960`, `f2eee2`, `font-poppins`, `font-anton` présents).
+  - Reporté : récupération du vrai logo ENDOmind (hors périmètre, fichier non fourni) ; la suppression du mode sombre automatique (`prefers-color-scheme: dark`) n'était pas demandée mais devenait incohérente avec la palette de marque fixe — à signaler à l'équipe si un visiteur en mode sombre doit être traité différemment.
+  - Le harnais n'a rien bloqué : `npm test` et `npm run lint` passaient, `./scripts/verifier-deployabilite.sh` ne signalait aucune borne, `./scripts/signaler-version.sh 5` accepté du premier coup.
+  - La démo Playwright (`e2e/demo.spec.ts`, hors DoD) échoue toujours pour une raison d'environnement déjà connue (bibliothèque système `libnspr4.so` manquante pour Chromium headless) — signalé, non bloquant pour la publication.
+  - **Modifications** :
+    - `frontend/src/app/layout.tsx` : remplace les polices Geist par Poppins/Anton (`next/font/google`) — sert le critère typographie.
+    - `frontend/src/app/globals.css` : variables `--brand` (`#b33960`), `--brand-muted`, fond `--background` crème (`#f2eee2`), suppression du mode sombre automatique (incohérent avec une palette de marque fixe) — sert le critère couleur de marque.
+    - `frontend/src/app/page.tsx` : couleurs/typographie de l'écran persona et du site ENDOmind reprennent la palette — sert le critère écran persona + site.
+    - `frontend/src/app/components/Chatbot.tsx` : bulle/entête/boutons de question reprennent la couleur de marque — sert le critère chatbot.
+
 ## À venir
 
 1. Propositions de fin de discussion : compte-rendu par mail et widget (boutons visibles et cliquables, non fonctionnels — mentionnés mais non implémentés dans la passation).

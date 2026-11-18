@@ -63,7 +63,7 @@ const styles: Record<string, React.CSSProperties> = {
     height: 56,
     borderRadius: "50%",
     border: "none",
-    background: "#6b2d8f",
+    background: "var(--brand)",
     color: "white",
     fontSize: 24,
     cursor: "pointer",
@@ -84,7 +84,7 @@ const styles: Record<string, React.CSSProperties> = {
     justifyContent: "space-between",
     alignItems: "center",
     padding: "12px 16px",
-    background: "#6b2d8f",
+    background: "var(--brand)",
     color: "white",
   },
   fermer: {
@@ -107,8 +107,8 @@ const styles: Record<string, React.CSSProperties> = {
     textAlign: "left",
     padding: "10px 12px",
     borderRadius: 8,
-    border: "1px solid #ddd",
-    background: "#faf7fc",
+    border: "1px solid var(--brand)",
+    background: "#f2eee2",
     cursor: "pointer",
   },
 };

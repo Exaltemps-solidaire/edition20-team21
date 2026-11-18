@@ -17,10 +17,10 @@ export default function Home() {
 
 function SelecteurPersona({ onChoisir }: { onChoisir: (id: string) => void }) {
   return (
-    <main style={{ padding: 32, fontFamily: "sans-serif", maxWidth: 480, margin: "0 auto" }}>
-      <h1>Qui êtes-vous ?</h1>
-      <p>Choisissez la personne que vous incarnez pour cette démonstration.</p>
-      <ul style={{ listStyle: "none", padding: 0, display: "flex", flexDirection: "column", gap: 12 }}>
+    <main style={{ padding: 32, maxWidth: 480, margin: "0 auto" }}>
+      <h1 style={{ color: "var(--brand)", fontSize: 28 }}>Qui êtes-vous ?</h1>
+      <p style={{ color: "var(--brand-muted)" }}>Choisissez la personne que vous incarnez pour cette démonstration.</p>
+      <ul style={{ listStyle: "none", padding: 0, marginTop: 16, display: "flex", flexDirection: "column", gap: 12 }}>
         {personas.map((p) => (
           <li key={p.id}>
             <button
@@ -31,14 +31,14 @@ function SelecteurPersona({ onChoisir }: { onChoisir: (id: string) => void }) {
                 width: "100%",
                 textAlign: "left",
                 padding: "12px 16px",
-                borderRadius: 8,
-                border: "1px solid #ddd",
+                borderRadius: 999,
+                border: "2px solid var(--brand)",
                 background: "white",
                 cursor: "pointer",
               }}
             >
-              <strong>{p.nom}</strong>
-              <div style={{ color: "#555", fontSize: 14 }}>{p.role}</div>
+              <strong style={{ color: "var(--brand)" }}>{p.nom}</strong>
+              <div style={{ color: "var(--brand-muted)", fontSize: 14 }}>{p.role}</div>
             </button>
           </li>
         ))}
@@ -49,26 +49,39 @@ function SelecteurPersona({ onChoisir }: { onChoisir: (id: string) => void }) {
 
 function SiteEndomind({ persona, onChangerPersona }: { persona: Persona; onChangerPersona: () => void }) {
   return (
-    <main style={{ fontFamily: "sans-serif" }}>
+    <main>
       <header
         style={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
           padding: "12px 24px",
-          borderBottom: "1px solid #eee",
+          borderBottom: "2px solid var(--brand)",
+          background: "white",
         }}
       >
-        <span>
-          Vous incarnez : <strong>{persona.nom}</strong> · {persona.role}
+        <span style={{ color: "var(--brand-muted)" }}>
+          Vous incarnez : <strong style={{ color: "var(--foreground)" }}>{persona.nom}</strong> · {persona.role}
         </span>
-        <button type="button" data-testid="changer-persona" onClick={onChangerPersona}>
+        <button
+          type="button"
+          data-testid="changer-persona"
+          onClick={onChangerPersona}
+          style={{
+            padding: "8px 16px",
+            borderRadius: 999,
+            border: "none",
+            background: "var(--brand)",
+            color: "white",
+            cursor: "pointer",
+          }}
+        >
           Changer
         </button>
       </header>
       <section style={{ padding: 32, maxWidth: 720, margin: "0 auto" }}>
-        <h1>ENDOmind</h1>
-        <p>
+        <h1 style={{ color: "var(--brand)", fontSize: 36 }}>ENDOmind</h1>
+        <p style={{ color: "var(--foreground)" }}>
           Connaissance, reconnaissance et prise en charge de l&apos;endométriose. Retrouvez nos
           guides, nos fiches et les groupes de parole près de chez vous.
         </p>
